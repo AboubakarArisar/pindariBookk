@@ -1,0 +1,1 @@
+export const DEFAULT_NOTE_IMAGE = 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=2128';
