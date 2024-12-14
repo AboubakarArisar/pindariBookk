@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Calendar, User, GraduationCap } from "lucide-react";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import { Note } from "../types";
 import { DEFAULT_NOTE_IMAGE } from "../utils/constants";
 
@@ -9,6 +9,10 @@ interface NoteCardProps {
 }
 
 export function NoteCard({ note }: NoteCardProps) {
+  const formattedDate = isValid(new Date(note.createdAt))
+    ? format(new Date(note.createdAt), "MMM d, yyyy")
+    : "Invalid Date";
+
   return (
     <div className='bg-white rounded-xl shadow-md overflow-hidden h-[70vh] transform hover:scale-102 transition-transform duration-300'>
       <img
@@ -27,7 +31,7 @@ export function NoteCard({ note }: NoteCardProps) {
           </div>
           <div className='flex items-center'>
             <Calendar className='w-4 h-4 mr-1 text-emerald-600' />
-            <span>{format(note.createdAt, "MMM d, yyyy")}</span>
+            <span>{formattedDate}</span>
           </div>
           <div className='flex items-center'>
             <GraduationCap className='w-4 h-4 mr-1 text-emerald-600' />
@@ -36,7 +40,7 @@ export function NoteCard({ note }: NoteCardProps) {
         </div>
         <p className='text-gray-600 mb-4 line-clamp-3'>{note.content}</p>
         <Link
-          to={`/notes/${note.id}`}
+          to={`/notes/${note._id}`}
           className='inline-block bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors duration-300'
         >
           Read More

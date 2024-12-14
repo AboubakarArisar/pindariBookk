@@ -1,47 +1,62 @@
-import React, { createContext, useContext, useState } from 'react';
-import { Note, Department } from '../types';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { Note, Department } from "../types";
+import client from "../utils/sanityClient";
 
 interface NotesContextType {
   notes: Note[];
-  addNote: (note: Omit<Note, 'id' | 'createdAt'>) => void;
+  addNote: (note: Omit<Note, "id" | "createdAt">) => void;
+  filterNotes: (department: Department) => void;
 }
 
 const NotesContext = createContext<NotesContextType | undefined>(undefined);
 
 export function NotesProvider({ children }: { children: React.ReactNode }) {
-  const [notes, setNotes] = useState<Note[]>([
-    {
-      id: '1',
-      title: 'Introduction to Data Structures',
-      content: 'A comprehensive guide to understanding basic data structures including arrays, linked lists, and trees...',
-      department: 'Computer Science' as Department,
-      author: 'John Doe',
-      createdAt: new Date('2024-03-10'),
-      imageUrl: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?auto=format&fit=crop&q=80&w=2128'
-    },
-    {
-      id: '2',
-      title: 'Financial Management Basics',
-      content: 'Understanding the fundamentals of financial management, including budgeting, forecasting...',
-      department: 'BBA' as Department,
-      author: 'Jane Smith',
-      createdAt: new Date('2024-03-09'),
-      imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=2128'
-    }
-  ]);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [filteredNotes, setFilteredNotes] = useState<Note[]>(notes);
 
-  const addNote = (note: Omit<Note, 'id' | 'createdAt'>) => {
-    const newNote: Note = {
-      ...note,
-      id: Math.random().toString(36).substr(2, 9),
-      createdAt: new Date()
+  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const data = await client.fetch('*[_type == "note"]');
+        setNotes(data);
+        setFilteredNotes(data);
+      } catch (error) {
+        console.error("Error fetching notes from Sanity:", error);
+      }
     };
-    setNotes(prev => [...prev, newNote]);
+
+    fetchNotes();
+  }, []);
+
+  const addNote = async (note: Omit<Note, "id" | "createdAt">) => {
+    try {
+      const newNote = {
+        _type: "note",
+        title: note.title,
+        content: note.content,
+        department: note.department,
+        author: note.author,
+        createdAt: new Date().toISOString(),
+        imageUrl: note.imageUrl,
+      };
+
+      const createdNote = await client.create(newNote);
+
+      setNotes((prev) => [...prev, createdNote]);
+    } catch (error) {
+      console.error("Error adding note to Sanity:", error);
+    }
+  };
+
+  const filterNotes = (department: Department) => {
+    const filtered = notes.filter((note) => note.department === department);
+    setFilteredNotes(filtered);
   };
 
   return (
-    <NotesContext.Provider value={{ notes, addNote }}>
+    <NotesContext.Provider
+      value={{ notes: filteredNotes, addNote, filterNotes }}
+    >
       {children}
     </NotesContext.Provider>
   );
@@ -50,7 +65,7 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
 export function useNotes() {
   const context = useContext(NotesContext);
   if (context === undefined) {
-    throw new Error('useNotes must be used within a NotesProvider');
+    throw new Error("useNotes must be used within a NotesProvider");
   }
   return context;
 }

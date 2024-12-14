@@ -1,8 +1,9 @@
 import { departments } from "../data/departments";
+import { Department } from "../types";
 
 interface DepartmentFilterProps {
-  selectedDepartment: string | null;
-  onDepartmentChange: (department: string | null) => void;
+  selectedDepartment: Department | null;
+  onDepartmentChange: (department: Department | null) => void;
 }
 
 export function DepartmentFilter({

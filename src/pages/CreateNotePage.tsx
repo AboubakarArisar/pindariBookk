@@ -1,118 +1,122 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { departments } from '../data/departments';
-import { Department } from '../types';
-import { useNotes } from '../context/NotesContext';
+import React, { useState } from "react";
+import { useNotes } from "../context/NotesContext";
+import { Note, Department } from "../types";
+import toast, { Toaster } from "react-hot-toast";
+import { departments } from "../data/departments";
 
-export function CreateNotePage() {
-  const navigate = useNavigate();
+const CreateNote: React.FC = () => {
   const { addNote } = useNotes();
-  const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    department: '' as Department,
-    imageUrl: '',
-    author: ''
-  });
+  const [title, setTitle] = useState<string>("");
+  const [author, setAuthor] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [department, setDepartment] = useState<Department | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addNote(formData);
-    navigate('/notes');
+    if (!department) {
+      toast.error("Please select a department");
+      return;
+    }
+
+    const newNote: Omit<Note, "id" | "createdAt"> = {
+      _id: "",
+      title,
+      author,
+      content,
+      department,
+      imageUrl,
+    };
+
+    addNote(newNote);
+
+    setTitle("");
+    setAuthor("");
+    setContent("");
+    setDepartment(null);
+    setImageUrl("");
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="container mx-auto px-4">
-        <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
-          <h1 className="text-3xl font-bold mb-8 text-emerald-900">Create New Note</h1>
-          <form onSubmit={handleSubmit}>
-            <div className="space-y-6">
-              <div>
-                <label htmlFor="title" className="block text-gray-700 font-medium mb-2">
-                  Title
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label htmlFor="author" className="block text-gray-700 font-medium mb-2">
-                  Author Name
-                </label>
-                <input
-                  type="text"
-                  id="author"
-                  value={formData.author}
-                  onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label htmlFor="department" className="block text-gray-700 font-medium mb-2">
-                  Department
-                </label>
-                <select
-                  id="department"
-                  value={formData.department}
-                  onChange={(e) => setFormData({ ...formData, department: e.target.value as Department })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                  required
-                >
-                  <option value="">Select Department</option>
-                  {departments.map((dept) => (
-                    <option key={dept} value={dept}>
-                      {dept}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="imageUrl" className="block text-gray-700 font-medium mb-2">
-                  Image URL (optional)
-                </label>
-                <input
-                  type="url"
-                  id="imageUrl"
-                  value={formData.imageUrl}
-                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="content" className="block text-gray-700 font-medium mb-2">
-                  Content
-                </label>
-                <textarea
-                  id="content"
-                  value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 h-64"
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700 transition-colors duration-300 font-medium"
-              >
-                Create Note
-              </button>
-            </div>
-          </form>
+    <div className='max-w-2xl mx-auto p-6'>
+      <Toaster />
+      <h1 className='text-3xl font-bold text-emerald-900 mb-6'>
+        Create New Note
+      </h1>
+      <form onSubmit={handleSubmit} className='space-y-4'>
+        <div>
+          <label className='block text-sm font-medium text-gray-700'>
+            Title
+          </label>
+          <input
+            type='text'
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3'
+          />
         </div>
-      </div>
+        <div>
+          <label className='block text-sm font-medium text-gray-700'>
+            Author
+          </label>
+          <input
+            type='text'
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+            required
+            className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3'
+          />
+        </div>
+        <div>
+          <label className='block text-sm font-medium text-gray-700'>
+            Content
+          </label>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            required
+            className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3'
+          />
+        </div>
+        <div>
+          <label className='block text-sm font-medium text-gray-700'>
+            Department
+          </label>
+          <select
+            value={department || ""}
+            onChange={(e) => setDepartment(e.target.value as Department)}
+            required
+            className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3'
+          >
+            <option value=''>Select Department</option>
+            {departments.map((dept) => (
+              <option key={dept} value={dept}>
+                {dept}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className='block text-sm font-medium text-gray-700'>
+            Image URL
+          </label>
+          <input
+            type='url'
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3'
+          />
+        </div>
+        <button
+          type='submit'
+          className='w-full bg-emerald-600 text-white font-bold py-3 px-6 rounded-md hover:bg-emerald-700'
+        >
+          Create Note
+        </button>
+      </form>
     </div>
   );
-}
+};
+
+export default CreateNote;

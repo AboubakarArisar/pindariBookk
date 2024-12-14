@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Header } from "./components/Header";
 import { HomePage } from "./pages/HomePage";
 import { NotesPage } from "./pages/NotesPage";
-import { CreateNotePage } from "./pages/CreateNotePage";
+import CreateNotePage from "./pages/CreateNotePage";
 import { NoteDetailPage } from "./pages/NoteDetailPage";
 import { NotesProvider } from "./context/NotesContext";
 import Footer from "./components/Footer";

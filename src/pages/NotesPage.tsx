@@ -19,7 +19,9 @@ export function NotesPage() {
       <h1 className='text-3xl font-bold mb-8'>Browse Notes</h1>
       <DepartmentFilter
         selectedDepartment={selectedDepartment}
-        onDepartmentChange={setSelectedDepartment}
+        onDepartmentChange={(department: Department | null) =>
+          setSelectedDepartment(department)
+        }
       />
       <div className='grid md:grid-cols-2 lg:grid-cols-3 place-items-center gap-6 w-full'>
         {filteredNotes.length === 0 && (
@@ -37,7 +39,7 @@ export function NotesPage() {
           </div>
         )}
         {filteredNotes.map((note) => (
-          <NoteCard key={note.id} note={note} />
+          <NoteCard key={note._id} note={note} />
         ))}
       </div>
     </div>
