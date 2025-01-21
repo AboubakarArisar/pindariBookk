@@ -11,7 +11,7 @@ export function NotesPage() {
   const { notes } = useNotes();
 
   const filteredNotes = selectedDepartment
-    ? notes.filter((note) => note.department === selectedDepartment)
+    ? notes.filter((note) => note.Department === selectedDepartment)
     : notes;
 
   return (
