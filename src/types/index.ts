@@ -1,19 +1,18 @@
-export type Department = 
-  | 'Computer Science'
-  | 'BBA'
-  | 'Accounting & Finance'
-  | 'Electrical Engineering'
-  | 'Computer System Engineering'
-  | 'Mathematics'
-  | 'B.Ed'
-  | 'Media Studies';
+export type Department =
+  | "Computer Science"
+  | "B.ED"
+  | "BBA"
+  | "Accounting Finance"
+  | "Mathematics"
+  | "Media Studies"
+  | "Electrical Engineering"
+  | "Computer System Engineering";
 
 export interface Note {
   id: string;
   title: string;
   content: string;
-  department: Department;
-  author: string;
-  createdAt: Date;
-  imageUrl?: string;
+  Author: string;
+  Department: Department;
+  imageUrl: string;
 }

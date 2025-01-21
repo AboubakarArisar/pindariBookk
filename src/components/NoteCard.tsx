@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { Calendar, User, GraduationCap } from "lucide-react";
-import { format } from "date-fns";
+import { User, GraduationCap } from "lucide-react";
+
 import { Note } from "../types";
 import { DEFAULT_NOTE_IMAGE } from "../utils/constants";
 
@@ -9,12 +9,12 @@ interface NoteCardProps {
 }
 
 export function NoteCard({ note }: NoteCardProps) {
-  let department = note.department;
+  let department = note.Department;
   function getShortForm(department: string) {
     switch (department) {
       case "Computer Science":
         return "CS";
-      case "Accounting & Finance":
+      case "Accounting Finance":
         return "A&F";
       case "Electrical Engineering":
         return "EE";
@@ -44,12 +44,9 @@ export function NoteCard({ note }: NoteCardProps) {
         <div className='flex items-center space-x-4 text-gray-600 mb-4'>
           <div className='flex items-center'>
             <User className='w-4 h-4 mr-1 text-emerald-600' />
-            <span className='truncate max-w-xs'>{note.author}</span>
+            <span className='truncate max-w-xs'>{note.Author}</span>
           </div>
-          <div className='flex items-center'>
-            <Calendar className='w-4 h-4 mr-1 text-emerald-600' />
-            <span>{format(note.createdAt, "MMM d, yyyy")}</span>
-          </div>
+
           <div className='flex items-center'>
             <GraduationCap className='w-4 h-4 mr-1 text-emerald-600' />
             <span>{userDepartment}</span>
